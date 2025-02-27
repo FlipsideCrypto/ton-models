@@ -1,8 +1,8 @@
 name: dbt_run_dev_refresh
 run-name: dbt_run_dev_refresh
 
-# on:
-#   workflow_dispatch:
+on:
+  workflow_dispatch:
 #   schedule:
 #     - cron: '27 8 * * *'
     
