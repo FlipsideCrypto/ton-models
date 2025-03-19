@@ -1,6 +1,7 @@
 {{ config (
     materialized = "view",
-    tags = ['streamline_view']
+    tags = ['streamline_view'],
+    enabled = false
 ) }}
 
 SELECT

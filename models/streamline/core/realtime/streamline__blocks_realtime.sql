@@ -10,7 +10,8 @@
         "sql_source" :"{{this.identifier}}",
         "order_by_column": "sequence_number DESC" }
     ),
-    tags = ['streamline_realtime']
+    tags = ['streamline_realtime'],
+    enabled = false
 ) }}
 
 WITH shards AS (

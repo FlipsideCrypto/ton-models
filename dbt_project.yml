@@ -75,7 +75,7 @@ vars:
   STREAMLINE_RUN_HISTORY: False
   STREAMLINE_RETRY_UNKNOWN: False
   UPDATE_SNOWFLAKE_TAGS: True
-  UPDATE_UDFS_AND_SPS: True 
+  UPDATE_UDFS_AND_SPS: False 
 
 
   API_INTEGRATION: '{{ var("config")[target.name]["API_INTEGRATION"] if var("config")[target.name] else var("config")["dev"]["API_INTEGRATION"] }}'

@@ -5,7 +5,8 @@
     unique_key = ['sequence_number','shard','workchain'],
     merge_exclude_columns = ["inserted_timestamp"],
     cluster_by = "ROUND(sequence_number, -5)",
-    tags = ['streamline_realtime']
+    tags = ['streamline_realtime'],
+    enabled = false
 ) }}
 
 SELECT
