@@ -1,0 +1,24 @@
+version: 2
+
+sources:
+  - name: bronze_streamline
+    database: streamline
+    schema: "{{ 'ton' if target.database == 'TON' else 'ton_dev' }}"
+    tables:
+      - name: shards
+      - name: blocks
+      - name: transactions
+ 
+  - name: crosschain
+    database: "{{ 'crosschain' if target.database == 'TON' else 'crosschain_dev' }}"
+    schema: core
+    tables:
+      - name: address_tags
+      - name: dim_dates
+  - name: crosschain_silver
+    database: "{{ 'crosschain' if target.database == 'TON' else 'crosschain_dev' }}"
+    schema: silver
+    tables:
+      - name: number_sequence
+      - name: complete_native_prices
+      - name: labels_combined
