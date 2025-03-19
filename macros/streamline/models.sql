@@ -18,7 +18,6 @@ WITH meta AS (
 )
 SELECT
     {{ other_cols }},
-    DATA,
     _inserted_timestamp,
     s.{{ partition_name }},
     s.value AS VALUE,
@@ -35,9 +34,7 @@ JOIN
     AND b.{{ partition_name }} = s.{{ partition_name }}
 WHERE
     b.{{ partition_name }} = s.{{ partition_name }}
-    AND (
-        data:error:code IS NULL
-    )
+    
 {% endmacro %}
 
 {% macro streamline_external_table_FR_query_v2(
@@ -60,7 +57,6 @@ WITH meta AS (
 )
 SELECT
     {{ other_cols }},
-    DATA,
     _inserted_timestamp,
     s.{{ partition_name }},
     s.value AS VALUE,
@@ -77,7 +73,5 @@ JOIN
     AND b.{{ partition_name }} = s.{{ partition_name }}
 WHERE
     b.{{ partition_name }} = s.{{ partition_name }}
-    AND (
-        data:error:code IS NULL
-    )
+    
 {% endmacro %}
