@@ -5,30 +5,25 @@
     begin = '2024-01-01',
     batch_size = 'day',
     cluster_by = ['block_date::DATE','modified_timestamp::DATE'],
-    tags = ['scheduled_core'],
+    tags = ['scheduled_core']
 ) }}
 
 WITH pre_final AS (
 
     SELECT
         block_date,
-        account,
-        last_trans_lt,
-        last_trans_hash,
-        account_status,
-        balance,
-        data_boc,
-        data_hash,
-        frozen_hash,
+        lt,
+        asset,
+        address,
+        amount,
         TIMESTAMP,
-        code_hash,
-        code_boc,
-        HASH,
+        mintless_claimed,
         _inserted_timestamp
     FROM
-        {{ ref('bronze__account_states') }}
+        {{ ref('bronze__balances_history') }}
         {# qualify ROW_NUMBER() over (
-        PARTITION BY account,
+        PARTITION BY address,
+        asset,
         TIMESTAMP
     ORDER BY
         _inserted_timestamp DESC
@@ -36,22 +31,15 @@ WITH pre_final AS (
 )
 SELECT
     block_date,
-    account,
-    last_trans_lt,
-    last_trans_hash,
-    account_status,
-    balance,
-    data_boc,
-    data_hash,
-    frozen_hash,
+    lt,
+    asset,
+    address,
+    amount,
     TIMESTAMP,
-    code_hash,
-    code_boc,
-    HASH,
     _inserted_timestamp,
     {{ dbt_utils.generate_surrogate_key(
-        ['account','timestamp']
-    ) }} AS account_states_id,
+        ['address','asset','TIMESTAMP']
+    ) }} AS balances_history_id,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
     '{{ invocation_id }}' AS _invocation_id

@@ -5,53 +5,46 @@
     begin = '2024-01-01',
     batch_size = 'day',
     cluster_by = ['block_date::DATE','modified_timestamp::DATE'],
-    tags = ['scheduled_core'],
+    tags = ['scheduled_core']
 ) }}
 
 WITH pre_final AS (
 
     SELECT
         block_date,
-        account,
-        last_trans_lt,
-        last_trans_hash,
-        account_status,
-        balance,
-        data_boc,
-        data_hash,
-        frozen_hash,
+        collection_address,
+        is_init,
+        lt,
         TIMESTAMP,
-        code_hash,
-        code_boc,
-        HASH,
+        address,
+        owner_address,
+        INDEX,
+        content_onchain,
         _inserted_timestamp
     FROM
-        {{ ref('bronze__account_states') }}
+        {{ ref('bronze__nft_items') }}
         {# qualify ROW_NUMBER() over (
-        PARTITION BY account,
-        TIMESTAMP
+        PARTITION BY seqno,
+        shard,
+        workchain
     ORDER BY
         _inserted_timestamp DESC
 ) = 1 #}
 )
 SELECT
     block_date,
-    account,
-    last_trans_lt,
-    last_trans_hash,
-    account_status,
-    balance,
-    data_boc,
-    data_hash,
-    frozen_hash,
+    collection_address,
+    is_init,
+    lt,
     TIMESTAMP,
-    code_hash,
-    code_boc,
-    HASH,
+    address,
+    owner_address,
+    INDEX,
+    content_onchain,
     _inserted_timestamp,
     {{ dbt_utils.generate_surrogate_key(
-        ['account','timestamp']
-    ) }} AS account_states_id,
+        ['collection_address','address','index','timestamp']
+    ) }} AS nft_items_id,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
     '{{ invocation_id }}' AS _invocation_id
