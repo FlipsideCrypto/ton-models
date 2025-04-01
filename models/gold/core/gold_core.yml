@@ -1,0 +1,8 @@
+version: 2
+
+models:
+  - name: core__fact_blocks
+  
+    config:
+      event_time: block_date
+ 
