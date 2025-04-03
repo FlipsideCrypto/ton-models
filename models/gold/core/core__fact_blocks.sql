@@ -39,9 +39,7 @@ SELECT
     gen_catchain_seqno,
     min_ref_mc_seqno,
     before_split,
-    {{ dbt_utils.generate_surrogate_key(
-        ['shard','seqno','workchain']
-    ) }} AS fact_blocks_id,
+    blocks_id AS fact_blocks_id,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp
 FROM

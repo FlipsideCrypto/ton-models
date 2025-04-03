@@ -36,6 +36,7 @@ SELECT
     address,
     amount,
     TIMESTAMP,
+    mintless_claimed,
     _inserted_timestamp,
     {{ dbt_utils.generate_surrogate_key(
         ['address','asset','TIMESTAMP']
