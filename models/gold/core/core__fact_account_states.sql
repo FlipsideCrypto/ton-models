@@ -9,8 +9,8 @@
 ) }}
 
 SELECT
-    account,
     TO_TIMESTAMP(TIMESTAMP) AS block_timestamp,
+    account,
     TIMESTAMP,
     last_trans_lt,
     last_trans_hash AS last_tx_hash,

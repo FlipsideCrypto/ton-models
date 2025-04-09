@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = ['jetton_events_id'],
+    unique_key = ['fact_jetton_events_id'],
     incremental_strategy = 'merge',
     merge_exclude_columns = ['inserted_timestamp'],
     cluster_by = ['block_timestamp::DATE','source','destination'],

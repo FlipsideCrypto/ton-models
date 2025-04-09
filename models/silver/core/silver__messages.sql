@@ -5,7 +5,8 @@
     begin = '2024-01-01',
     batch_size = 'day',
     cluster_by = ['block_date::DATE','modified_timestamp::DATE'],
-    tags = ['scheduled_core']
+    tags = ['scheduled_core'],
+    enabled = false
 ) }}
 
 WITH pre_final AS (
