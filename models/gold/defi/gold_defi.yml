@@ -1,0 +1,112 @@
+version: 2
+
+models:
+  - name: defi__fact_dex_pools
+    description: "Contains history of DEX pools states including static information about pools, reserves, and estimated TVL values. Each state includes information about the jettons in the pool, fees, and liquidity metrics."
+    columns:
+      - name: block_timestamp_last_updated
+        description: "Timestamp of when the pool was last updated, converted from last_updated Unix timestamp."
+      - name: block_timestamp_discovered_at
+        description: "Timestamp of when the pool was first discovered (first swap), converted from discovered_at Unix timestamp."
+      - name: project
+        description: "Project name of the DEX (e.g., ston.fi, dedust.io, megaton.fi, tonco)."
+      - name: pool
+        description: "Address of the pool."
+      - name: version
+        description: "Version of the project protocol."
+      - name: is_liquid
+        description: "Boolean flag indicating if the pool is liquid. A pool is considered liquid if it has TON, LSD, or a stable coin."
+      - name: reserves_right
+        description: "Raw amount of the right jetton in the pool."
+      - name: reserves_left
+        description: "Raw amount of the left jetton in the pool."
+      - name: jetton_right
+        description: "Address of the right jetton in the pool (fixed for each pool address, cannot be changed)."
+      - name: jetton_left
+        description: "Address of the left jetton in the pool (fixed for each pool address, cannot be changed)."
+      - name: total_supply
+        description: "Total supply of the pool LP-jetton. For TONCO, represents the number of active NFT positions."
+      - name: protocol_fee
+        description: "Fee percentage allocated to the protocol. Total fee equals lp_fee + protocol_fee + referral_fee (when referral address is present)."
+      - name: referral_fee
+        description: "Fee percentage allocated to referrals when a referral address is specified during a swap. For ston.fi v2, this value is always null."
+      - name: lp_fee
+        description: "Fee percentage allocated to liquidity providers."
+      - name: tvl_ton
+        description: "Total Value Locked in the pool denominated in TON. Null for pools with is_liquid=false."
+      - name: tvl_usd
+        description: "Total Value Locked in the pool denominated in USD. Null for pools with is_liquid=false."
+      - name: last_updated
+        description: "Unix timestamp of the pool's last update (swap or pool LP-jetton mint/burn)."
+      - name: discovered_at
+        description: "Unix timestamp of when the pool was first discovered through a swap."
+      - name: fact_dex_pools_id
+        description: "Unique identifier for the DEX pool record."
+      - name: inserted_timestamp
+        description: "Timestamp when the record was inserted into the data warehouse."
+      - name: modified_timestamp
+        description: "Timestamp when the record was last modified in the data warehouse."
+    tests:
+      - dbt_utils.recency:
+          datepart: hour
+          field: block_timestamp_last_updated
+          interval: 30
+          severity: error
+          tags: ['test_recency']
+
+  - name: defi__fact_dex_trades
+    description: "Contains DEX and launchpad trading data, capturing swap events across different decentralized exchanges and launchpad platforms in the TON ecosystem."
+    columns:
+      - name: block_timestamp
+        description: "Timestamp of the block when the trade event occurred, converted from event_time."
+      - name: event_type
+        description: "Type of the event: 'trade' for normal DEX swaps or 'launch' for when liquidity is collected from a bonding curve and sent to DEX."
+      - name: tx_hash
+        description: "Transaction hash of the trade."
+      - name: project_type
+        description: "Type of project: 'dex' for classical AMM DEXs or 'launchpad' for bonding curve launchpads."
+      - name: project
+        description: "Name of the project (e.g., ston.fi, dedust.io, megaton.fi, tonco, ton.fun, gaspump)."
+      - name: pool_address
+        description: "Address of the pool where the trade occurred. Null if the pool is not known."
+      - name: version
+        description: "Version of the project protocol."
+      - name: trader_address
+        description: "Address of the trader who executed the swap."
+      - name: token_bought_address
+        description: "Address of the token that was bought. May include special wrapped TON aliases."
+      - name: token_sold_address
+        description: "Address of the token that was sold. May include special wrapped TON aliases."
+      - name: amount_bought_raw
+        description: "Raw amount of the token bought without dividing by 10^decimals. To get decimals, use the jetton_metadata table."
+      - name: amount_sold_raw
+        description: "Raw amount of the token sold without dividing by 10^decimals. To get decimals, use the jetton_metadata table."
+      - name: router_address
+        description: "Address of the router used for the trade. Null if the router is not used by the project."
+      - name: volume_ton
+        description: "Volume of the trade in TON. Calculated based on the amount of tokens traded if the trade involves TON, wrapped TON, USDT, USDC, or LSD (stTON, tsTON, hTON)."
+      - name: volume_usd
+        description: "Volume of the trade in USD. Calculated based on the amount of tokens traded if the trade involves TON, wrapped TON, USDT, USDC, or LSD."
+      - name: referral_address
+        description: "Referral address if specified. Null if the referral is not specified or not supported by the project."
+      - name: platform_tag
+        description: "Platform address. Null if the platform is not specified or not supported by the project."
+      - name: trace_id
+        description: "Trace ID for the transaction."
+      - name: query_id
+        description: "Query ID of the transaction. Null if query ID is not supported by the project."
+      - name: event_time
+        description: "Unix timestamp when the trade event occurred."
+      - name: fact_dex_trades_id
+        description: "Unique identifier for the DEX trade record."
+      - name: inserted_timestamp
+        description: "Timestamp when the record was inserted into the data warehouse."
+      - name: modified_timestamp
+        description: "Timestamp when the record was last modified in the data warehouse."
+    tests:
+      - dbt_utils.recency:
+          datepart: hour
+          field: block_timestamp
+          interval: 30
+          severity: error
+          tags: ['test_recency']
