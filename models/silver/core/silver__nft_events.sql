@@ -88,7 +88,7 @@ SELECT
     lt,
     _inserted_timestamp,
     {{ dbt_utils.generate_surrogate_key(
-        ['tx_hash','nft_item_index','timestamp','type']
+        ['nft_item_address','nft_item_index','timestamp','type','lt']
     ) }} AS nft_events_id,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
