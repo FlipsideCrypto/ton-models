@@ -143,6 +143,20 @@ models:
           interval: 30
           severity: error
           tags: ['test_recency']
+      - dbt_utils.sequential_values:
+          column_name: seqno
+          interval: 1
+          config:
+            severity: error
+            error_if: ">1"
+          tags: ['test_recency']
+      - dbt_utils.sequential_values:
+          column_name: mc_block_seqno
+          interval: 1
+          config:
+            severity: error
+            error_if: ">1"
+          tags: ['test_recency']
 
   - name: core__fact_jetton_events
     description: "Contains information about Jetton events such as transfers, burns, and mints according to TEP-74 standard."
