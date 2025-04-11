@@ -3,8 +3,24 @@ version: 2
 sources:
   - name: bronze_streamline
     database: streamline
-    schema: "{{ 'ton' if target.database == 'TON' else 'ton_dev' }}"
+    schema: ton 
+    # "{{ 'ton' if target.database == 'TON' else 'ton_dev' }}"
     tables:
+      - name: account_states_tdl
+      - name: balances_history_tdl
+      - name: blocks_tdl
+      - name: dex_pools_tdl
+      - name: dex_trades_tdl
+      - name: jetton_events_tdl
+      - name: jetton_metadata_tdl
+      - name: messages_tdl
+      - name: messages_with_data_tdl
+      - name: nft_events_tdl
+      - name: nft_items_tdl
+      - name: nft_metadata_tdl
+      - name: nft_sales_tdl
+      - name: nft_transfers_tdl
+      - name: transactions_tdl
       - name: shards
       - name: blocks
       - name: transactions

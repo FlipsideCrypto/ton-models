@@ -1,0 +1,50 @@
+version: 2
+
+models:
+  - name: bronze__account_states
+    config:
+      event_time: block_date
+  - name: bronze__balances_history
+    config:
+      event_time: block_date
+  - name: bronze__blocks
+    config:
+      event_time: block_date  
+  - name: bronze__dex_pools
+    config:
+      event_time: block_date
+  - name: bronze__dex_trades
+    config:
+      event_time: block_date
+  - name: bronze__jetton_events
+    config:
+      event_time: block_date
+  - name: bronze__jetton_metadata
+    config:
+      event_time: adding_date
+  - name: bronze__messages  
+    config:
+      event_time: block_date
+  - name: bronze__messages_with_data
+    config:
+      event_time: block_date
+  - name: bronze__nft_events
+    config:
+      event_time: block_date
+  - name: bronze__nft_items
+    config:
+      event_time: block_date
+  - name: bronze__nft_metadata
+    config:
+      event_time: adding_date
+  - name: bronze__nft_sales
+    config:
+      event_time: block_date
+  - name: bronze__nft_transfers
+    config:
+      event_time: block_date
+  - name: bronze__transactions
+    config:
+      event_time: block_date
+ 
+ 

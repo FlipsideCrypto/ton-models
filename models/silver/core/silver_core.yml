@@ -1,0 +1,7 @@
+version: 2
+
+models:
+  - name: silver__blocks
+    config:
+      event_time: block_date
+ 
