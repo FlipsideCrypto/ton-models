@@ -34,12 +34,12 @@ WITH pre_final AS (
         _inserted_timestamp
     FROM
         {{ ref('bronze__dex_trades') }}
-        qualify ROW_NUMBER() over (
-            PARTITION BY tx_hash,
-            trace_id
-            ORDER BY
-                _inserted_timestamp DESC
-        ) = 1
+        {# qualify ROW_NUMBER() over (
+        PARTITION BY tx_hash,
+        trace_id
+    ORDER BY
+        _inserted_timestamp DESC
+) = 1 #}
 )
 SELECT
     block_date,

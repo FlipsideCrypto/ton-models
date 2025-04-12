@@ -31,13 +31,13 @@ WITH pre_final AS (
         _inserted_timestamp
     FROM
         {{ ref('bronze__dex_pools') }}
-        qualify ROW_NUMBER() over (
-            PARTITION BY pool,
-            last_updated
-            ORDER BY
-                _inserted_timestamp DESC
-        ) = 1
-)
+        {# qualify ROW_NUMBER() over (
+        PARTITION BY pool,
+        last_updated
+    ORDER BY
+        _inserted_timestamp DESC
+) = 1
+) #}
 SELECT
     block_date,
     reserves_right,
