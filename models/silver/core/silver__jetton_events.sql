@@ -14,7 +14,8 @@ WITH pre_final AS (
         block_date,
         tx_hash,
         TYPE,
-        jetton,
+        VALUE :jetton_master :: STRING AS jetton_master,
+        VALUE :jetton_wallet :: STRING AS jetton_wallet,
         COMMENT,
         forward_ton_amount,
         amount,
@@ -27,17 +28,18 @@ WITH pre_final AS (
         _inserted_timestamp
     FROM
         {{ ref('bronze__jetton_events') }}
-        qualify ROW_NUMBER() over (
-            PARTITION BY tx_hash
-            ORDER BY
-                _inserted_timestamp DESC
-        ) = 1
+        {# qualify ROW_NUMBER() over (
+        PARTITION BY tx_hash
+    ORDER BY
+        _inserted_timestamp DESC
+) = 1 #}
 )
 SELECT
     block_date,
     tx_hash,
     TYPE,
-    jetton,
+    jetton_master,
+    jetton_wallet,
     COMMENT,
     forward_ton_amount,
     amount,
