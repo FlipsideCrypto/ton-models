@@ -36,8 +36,8 @@ WITH pre_final AS (
         last_updated
     ORDER BY
         _inserted_timestamp DESC
-) = 1
-) #}
+) = 1 #}
+)
 SELECT
     block_date,
     reserves_right,
