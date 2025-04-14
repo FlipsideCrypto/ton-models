@@ -5,7 +5,8 @@
     begin = '2024-01-01',
     batch_size = 'day',
     cluster_by = ['block_date::DATE','modified_timestamp::DATE'],
-    tags = ['scheduled_core']
+    tags = ['scheduled_core'],
+    enabled = false
 ) }}
 
 WITH pre_final AS (
@@ -36,12 +37,12 @@ WITH pre_final AS (
         _inserted_timestamp
     FROM
         {{ ref('bronze__messages') }}
-        qualify ROW_NUMBER() over (
-            PARTITION BY tx_hash,
-            msg_hash
-            ORDER BY
-                _inserted_timestamp DESC
-        ) = 1
+        {# qualify ROW_NUMBER() over (
+        PARTITION BY tx_hash,
+        msg_hash
+    ORDER BY
+        _inserted_timestamp DESC
+) = 1 #}
 )
 SELECT
     block_date,

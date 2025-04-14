@@ -33,13 +33,13 @@ WITH pre_final AS (
         _inserted_timestamp
     FROM
         {{ ref('bronze__jetton_metadata') }}
-        qualify ROW_NUMBER() over (
-            PARTITION BY address,
-            update_time_metadata,
-            update_time_onchain
-            ORDER BY
-                _inserted_timestamp DESC
-        ) = 1
+        {# qualify ROW_NUMBER() over (
+        PARTITION BY address,
+        update_time_metadata,
+        update_time_onchain
+    ORDER BY
+        _inserted_timestamp DESC
+) = 1 #}
 )
 SELECT
     adding_date,

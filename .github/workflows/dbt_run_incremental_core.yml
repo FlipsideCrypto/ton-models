@@ -5,6 +5,11 @@ on:
   workflow_dispatch:
     branches:
       - "main"
+  schedule:
+    # An hour after the daily TON exports Airflow job kicks off
+    # 20 minutes after the daily TON external table refresh happens
+    # https://github.com/ton-studio/ton-etl/blob/main/datalake/airflow/dags/datalake_daily_sync.py#L58
+    - cron: "35 1 * * *"
     
 env:
   DBT_PROFILES_DIR: "${{ vars.DBT_PROFILES_DIR }}"
