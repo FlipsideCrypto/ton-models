@@ -10,6 +10,38 @@ models:
         data_type: DATE
       - name: account
         data_type: VARCHAR
+      - name: account_states_id
+        data_type: VARCHAR
+      - name: account_status
+        data_type: VARCHAR
+      - name: balance
+        data_type: NUMBER
+      - name: code_boc
+        data_type: BINARY
+      - name: code_hash
+        data_type: VARCHAR
+      - name: data_boc
+        data_type: BINARY
+      - name: data_hash
+        data_type: VARCHAR
+      - name: frozen_hash
+        data_type: VARCHAR
+      - name: hash
+        data_type: VARCHAR
+      - name: inserted_timestamp
+        data_type: TIMESTAMP_NTZ
+      - name: last_trans_hash
+        data_type: VARCHAR
+      - name: last_trans_lt
+        data_type: NUMBER
+      - name: modified_timestamp
+        data_type: TIMESTAMP_NTZ
+      - name: timestamp
+        data_type: NUMBER
+      - name: _inserted_timestamp
+        data_type: TIMESTAMP_NTZ
+      - name: _invocation_id
+        data_type: VARCHAR
 
   - name: silver__balances_history
     config:
@@ -20,6 +52,26 @@ models:
         data_type: DATE
       - name: lt
         data_type: NUMBER
+      - name: address
+        data_type: VARCHAR
+      - name: amount
+        data_type: NUMBER
+      - name: asset
+        data_type: VARCHAR
+      - name: balances_history_id
+        data_type: VARCHAR
+      - name: inserted_timestamp
+        data_type: TIMESTAMP_NTZ
+      - name: mintless_claimed
+        data_type: BOOLEAN
+      - name: modified_timestamp
+        data_type: TIMESTAMP_NTZ
+      - name: timestamp
+        data_type: NUMBER
+      - name: _inserted_timestamp
+        data_type: TIMESTAMP_NTZ
+      - name: _invocation_id
+        data_type: VARCHAR
 
   - name: silver__blocks
     config:
@@ -37,7 +89,7 @@ models:
       - name: want_merge
         data_type: BOOLEAN
       - name: gen_utime
-        data_type: TIMESTAMP_NTZ
+        data_type: NUMBER
       - name: tx_count
         data_type: NUMBER
       - name: global_id
@@ -49,9 +101,9 @@ models:
       - name: mc_block_seqno
         data_type: NUMBER
       - name: vert_seqno_incr
-        data_type: NUMBER
+        data_type: BOOLEAN
       - name: validator_list_hash_short
-        data_type: VARCHAR
+        data_type: NUMBER
       - name: after_merge
         data_type: BOOLEAN
       - name: want_split
@@ -67,7 +119,7 @@ models:
       - name: prev_key_block_seqno
         data_type: NUMBER
       - name: shard
-        data_type: VARCHAR
+        data_type: NUMBER
       - name: seqno
         data_type: NUMBER
       - name: vert_seqno
@@ -83,7 +135,7 @@ models:
       - name: start_lt
         data_type: NUMBER
       - name: mc_block_shard
-        data_type: VARCHAR
+        data_type: NUMBER
       - name: before_split
         data_type: BOOLEAN
       - name: workchain
@@ -93,6 +145,8 @@ models:
       - name: inserted_timestamp
         data_type: TIMESTAMP_NTZ
       - name: modified_timestamp
+        data_type: TIMESTAMP_NTZ
+      - name: _inserted_timestamp
         data_type: TIMESTAMP_NTZ
       - name: _invocation_id
         data_type: VARCHAR
@@ -106,6 +160,46 @@ models:
         data_type: DATE
       - name: reserves_right
         data_type: NUMBER
+      - name: dex_pools_id
+        data_type: VARCHAR
+      - name: discovered_at
+        data_type: NUMBER
+      - name: inserted_timestamp
+        data_type: TIMESTAMP_NTZ
+      - name: is_liquid
+        data_type: BOOLEAN
+      - name: jetton_left
+        data_type: VARCHAR
+      - name: jetton_right
+        data_type: VARCHAR
+      - name: last_updated
+        data_type: NUMBER
+      - name: lp_fee
+        data_type: NUMBER
+      - name: modified_timestamp
+        data_type: TIMESTAMP_NTZ
+      - name: pool
+        data_type: VARCHAR
+      - name: project
+        data_type: VARCHAR
+      - name: protocol_fee
+        data_type: NUMBER
+      - name: referral_fee
+        data_type: NUMBER
+      - name: reserves_left
+        data_type: NUMBER
+      - name: total_supply
+        data_type: NUMBER
+      - name: tvl_ton
+        data_type: NUMBER
+      - name: tvl_usd
+        data_type: NUMBER
+      - name: version
+        data_type: NUMBER
+      - name: _inserted_timestamp
+        data_type: TIMESTAMP_NTZ
+      - name: _invocation_id
+        data_type: VARCHAR
 
   - name: silver__dex_trades
     config:
@@ -116,6 +210,52 @@ models:
         data_type: DATE
       - name: volume_ton
         data_type: NUMBER
+      - name: amount_bought_raw
+        data_type: NUMBER
+      - name: amount_sold_raw
+        data_type: NUMBER
+      - name: dex_trades_id
+        data_type: VARCHAR
+      - name: event_time
+        data_type: NUMBER
+      - name: event_type
+        data_type: VARCHAR
+      - name: inserted_timestamp
+        data_type: TIMESTAMP_NTZ
+      - name: modified_timestamp
+        data_type: TIMESTAMP_NTZ
+      - name: platform_tag
+        data_type: VARCHAR
+      - name: pool_address
+        data_type: VARCHAR
+      - name: project
+        data_type: VARCHAR
+      - name: project_type
+        data_type: VARCHAR
+      - name: query_id
+        data_type: NUMBER
+      - name: referral_address
+        data_type: VARCHAR
+      - name: router_address
+        data_type: VARCHAR
+      - name: token_bought_address
+        data_type: VARCHAR
+      - name: token_sold_address
+        data_type: VARCHAR
+      - name: trace_id
+        data_type: VARCHAR
+      - name: trader_address
+        data_type: VARCHAR
+      - name: tx_hash
+        data_type: VARCHAR
+      - name: version
+        data_type: NUMBER
+      - name: volume_usd
+        data_type: NUMBER
+      - name: _inserted_timestamp
+        data_type: TIMESTAMP_NTZ
+      - name: _invocation_id
+        data_type: VARCHAR
 
   - name: silver__jetton_events
     config:
@@ -125,6 +265,40 @@ models:
       - name: block_date
         data_type: DATE
       - name: tx_hash
+        data_type: VARCHAR
+      - name: amount
+        data_type: NUMBER
+      - name: comment
+        data_type: VARCHAR
+      - name: destination
+        data_type: VARCHAR
+      - name: forward_ton_amount
+        data_type: NUMBER
+      - name: inserted_timestamp
+        data_type: TIMESTAMP_NTZ
+      - name: jetton_events_id
+        data_type: VARCHAR
+      - name: jetton_master
+        data_type: VARCHAR
+      - name: jetton_wallet
+        data_type: VARCHAR
+      - name: modified_timestamp
+        data_type: TIMESTAMP_NTZ
+      - name: query_id
+        data_type: NUMBER
+      - name: source
+        data_type: VARCHAR
+      - name: tx_aborted
+        data_type: BOOLEAN
+      - name: tx_lt
+        data_type: NUMBER
+      - name: type
+        data_type: VARCHAR
+      - name: utime
+        data_type: NUMBER
+      - name: _inserted_timestamp
+        data_type: TIMESTAMP_NTZ
+      - name: _invocation_id
         data_type: VARCHAR
 
   - name: silver__jetton_metadata
@@ -136,7 +310,50 @@ models:
         data_type: DATE
       - name: tonapi_image_url
         data_type: VARCHAR
-
+      - name: adding_at
+        data_type: NUMBER
+      - name: address
+        data_type: VARCHAR
+      - name: admin_address
+        data_type: VARCHAR
+      - name: code_hash
+        data_type: VARCHAR
+      - name: decimals
+        data_type: NUMBER
+      - name: description
+        data_type: VARCHAR
+      - name: image
+        data_type: VARCHAR
+      - name: image_data
+        data_type: VARCHAR
+      - name: inserted_timestamp
+        data_type: TIMESTAMP_NTZ
+      - name: jetton_content_onchain
+        data_type: VARCHAR
+      - name: jetton_metadata_id
+        data_type: VARCHAR
+      - name: jetton_wallet_code_hash
+        data_type: VARCHAR
+      - name: metadata_status
+        data_type: NUMBER
+      - name: mintable
+        data_type: BOOLEAN
+      - name: modified_timestamp
+        data_type: TIMESTAMP_NTZ
+      - name: name
+        data_type: VARCHAR
+      - name: sources
+        data_type: VARIANT
+      - name: symbol
+        data_type: VARCHAR
+      - name: update_time_metadata
+        data_type: NUMBER
+      - name: update_time_onchain
+        data_type: NUMBER
+      - name: _inserted_timestamp
+        data_type: TIMESTAMP_NTZ
+      - name: _invocation_id
+        data_type: VARCHAR
 
   - name: silver__messages_with_data
     config:
@@ -146,7 +363,61 @@ models:
       - name: block_date
         data_type: DATE
       - name: body_boc
-        data_type: VARIANT
+        data_type: BINARY
+      - name: body_hash
+        data_type: VARCHAR
+      - name: bounce
+        data_type: BOOLEAN
+      - name: bounced
+        data_type: BOOLEAN
+      - name: comment
+        data_type: VARCHAR
+      - name: created_at
+        data_type: NUMBER
+      - name: created_lt
+        data_type: NUMBER
+      - name: destination
+        data_type: VARCHAR
+      - name: direction
+        data_type: VARCHAR
+      - name: fwd_fee
+        data_type: NUMBER
+      - name: ihr_disabled
+        data_type: BOOLEAN
+      - name: ihr_fee
+        data_type: NUMBER
+      - name: import_fee
+        data_type: NUMBER
+      - name: init_state_boc
+        data_type: BINARY
+      - name: init_state_hash
+        data_type: VARCHAR
+      - name: inserted_timestamp
+        data_type: TIMESTAMP_NTZ
+      - name: messages_with_data_id
+        data_type: VARCHAR
+      - name: modified_timestamp
+        data_type: TIMESTAMP_NTZ
+      - name: msg_hash
+        data_type: VARCHAR
+      - name: opcode
+        data_type: NUMBER
+      - name: source
+        data_type: VARCHAR
+      - name: trace_id
+        data_type: VARCHAR
+      - name: tx_hash
+        data_type: VARCHAR
+      - name: tx_lt
+        data_type: NUMBER
+      - name: tx_now
+        data_type: NUMBER
+      - name: _inserted_timestamp
+        data_type: TIMESTAMP_NTZ
+      - name: _invocation_id
+        data_type: VARCHAR
+      - name: _value
+        data_type: NUMBER
 
   - name: silver__nft_events
     config:
@@ -168,7 +439,7 @@ models:
       - name: collection_address
         data_type: VARCHAR
       - name: content_onchain
-        data_type: VARIANT
+        data_type: TEXT
       - name: trace_id
         data_type: VARCHAR
       - name: sale_contract
@@ -176,21 +447,21 @@ models:
       - name: forward_amount
         data_type: NUMBER
       - name: nft_item_index
-        data_type: NUMBER
+        data_type: TEXT
       - name: query_id
-        data_type: VARCHAR
+        data_type: NUMBER
       - name: is_init
         data_type: BOOLEAN
       - name: timestamp
-        data_type: TIMESTAMP_NTZ
+        data_type: NUMBER
       - name: nft_item_address
         data_type: VARCHAR
       - name: custom_payload
-        data_type: VARIANT
+        data_type: BINARY
       - name: comment
         data_type: VARCHAR
       - name: sale_end_time
-        data_type: TIMESTAMP_NTZ
+        data_type: NUMBER
       - name: sale_type
         data_type: VARCHAR
       - name: auction_max_bid
@@ -200,7 +471,7 @@ models:
       - name: marketplace_address
         data_type: VARCHAR
       - name: forward_payload
-        data_type: VARIANT
+        data_type: BINARY
       - name: royalty_amount
         data_type: NUMBER
       - name: auction_min_step
@@ -221,6 +492,8 @@ models:
         data_type: TIMESTAMP_NTZ
       - name: modified_timestamp
         data_type: TIMESTAMP_NTZ
+      - name: _inserted_timestamp
+        data_type: TIMESTAMP_NTZ
       - name: _invocation_id
         data_type: VARCHAR
 
@@ -238,20 +511,22 @@ models:
       - name: lt
         data_type: NUMBER
       - name: timestamp
-        data_type: TIMESTAMP_NTZ
+        data_type: NUMBER
       - name: address
         data_type: VARCHAR
       - name: owner_address
         data_type: VARCHAR
       - name: index
-        data_type: NUMBER
+        data_type: TEXT
       - name: content_onchain
-        data_type: VARIANT
+        data_type: TEXT
       - name: nft_items_id
         data_type: VARCHAR
       - name: inserted_timestamp
         data_type: TIMESTAMP_NTZ
       - name: modified_timestamp
+        data_type: TIMESTAMP_NTZ
+      - name: _inserted_timestamp
         data_type: TIMESTAMP_NTZ
       - name: _invocation_id
         data_type: VARCHAR
@@ -268,36 +543,38 @@ models:
       - name: image
         data_type: VARCHAR
       - name: metadata_status
-        data_type: VARCHAR
+        data_type: NUMBER
       - name: parent_address
         data_type: VARCHAR
       - name: update_time_metadata
-        data_type: TIMESTAMP_NTZ
+        data_type: NUMBER
       - name: adding_at
-        data_type: TIMESTAMP_NTZ
+        data_type: NUMBER
       - name: update_time_onchain
-        data_type: TIMESTAMP_NTZ
+        data_type: NUMBER
       - name: address
         data_type: VARCHAR
       - name: tonapi_image_url
         data_type: VARCHAR
       - name: content_onchain
-        data_type: VARIANT
+        data_type: VARCHAR
       - name: type
         data_type: VARCHAR
       - name: attributes
-        data_type: VARIANT
+        data_type: VARCHAR
       - name: name
         data_type: VARCHAR
       - name: sources
         data_type: VARIANT
       - name: image_data
-        data_type: VARIANT
+        data_type: VARCHAR
       - name: nft_metadata_id
         data_type: VARCHAR
       - name: inserted_timestamp
         data_type: TIMESTAMP_NTZ
       - name: modified_timestamp
+        data_type: TIMESTAMP_NTZ
+      - name: _inserted_timestamp
         data_type: TIMESTAMP_NTZ
       - name: _invocation_id
         data_type: VARCHAR
@@ -314,7 +591,7 @@ models:
       - name: marketplace_fee_address
         data_type: VARCHAR
       - name: end_time
-        data_type: TIMESTAMP_NTZ
+        data_type: NUMBER
       - name: is_complete
         data_type: BOOLEAN
       - name: last_member
@@ -324,7 +601,7 @@ models:
       - name: royalty_amount
         data_type: NUMBER
       - name: created_at
-        data_type: TIMESTAMP_NTZ
+        data_type: NUMBER
       - name: nft_address
         data_type: VARCHAR
       - name: marketplace_fee
@@ -340,7 +617,7 @@ models:
       - name: min_bid
         data_type: NUMBER
       - name: timestamp
-        data_type: TIMESTAMP_NTZ
+        data_type: NUMBER
       - name: royalty_address
         data_type: VARCHAR
       - name: min_step
@@ -348,7 +625,7 @@ models:
       - name: max_bid
         data_type: NUMBER
       - name: last_bid_at
-        data_type: TIMESTAMP_NTZ
+        data_type: NUMBER
       - name: lt
         data_type: NUMBER
       - name: type
@@ -358,6 +635,8 @@ models:
       - name: inserted_timestamp
         data_type: TIMESTAMP_NTZ
       - name: modified_timestamp
+        data_type: TIMESTAMP_NTZ
+      - name: _inserted_timestamp
         data_type: TIMESTAMP_NTZ
       - name: _invocation_id
         data_type: VARCHAR
@@ -372,13 +651,13 @@ models:
       - name: trace_id
         data_type: VARCHAR
       - name: tx_now
-        data_type: TIMESTAMP_NTZ
+        data_type: NUMBER
       - name: custom_payload
-        data_type: VARIANT
+        data_type: BINARY
       - name: new_owner
         data_type: VARCHAR
       - name: forward_payload
-        data_type: VARIANT
+        data_type: BINARY
       - name: comment
         data_type: VARCHAR
       - name: old_owner
@@ -386,7 +665,7 @@ models:
       - name: tx_aborted
         data_type: BOOLEAN
       - name: query_id
-        data_type: VARCHAR
+        data_type: NUMBER
       - name: tx_hash
         data_type: VARCHAR
       - name: tx_lt
@@ -400,12 +679,14 @@ models:
       - name: nft_item_address
         data_type: VARCHAR
       - name: nft_item_index
-        data_type: NUMBER
+        data_type: VARCHAR
       - name: nft_transfers_id
         data_type: VARCHAR
       - name: inserted_timestamp
         data_type: TIMESTAMP_NTZ
       - name: modified_timestamp
+        data_type: TIMESTAMP_NTZ
+      - name: _inserted_timestamp
         data_type: TIMESTAMP_NTZ
       - name: _invocation_id
         data_type: VARCHAR
@@ -458,11 +739,11 @@ models:
       - name: action_skipped_actions
         data_type: NUMBER
       - name: now
-        data_type: TIMESTAMP_NTZ
+        data_type: NUMBER
       - name: credit_due_fees_collected
         data_type: NUMBER
       - name: block_shard
-        data_type: VARCHAR
+        data_type: NUMBER
       - name: end_status
         data_type: VARCHAR
       - name: credit_first
@@ -510,7 +791,7 @@ models:
       - name: lt
         data_type: NUMBER
       - name: compute_mode
-        data_type: VARCHAR
+        data_type: NUMBER
       - name: credit
         data_type: NUMBER
       - name: storage_fees_due
@@ -536,6 +817,8 @@ models:
       - name: inserted_timestamp
         data_type: TIMESTAMP_NTZ
       - name: modified_timestamp
+        data_type: TIMESTAMP_NTZ
+      - name: _inserted_timestamp
         data_type: TIMESTAMP_NTZ
       - name: _invocation_id
         data_type: VARCHAR
