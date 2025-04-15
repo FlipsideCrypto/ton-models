@@ -1,4 +1,3 @@
-
 version: 2
 
 models:
@@ -7,72 +6,112 @@ models:
     columns:
       - name: block_timestamp
         description: "Timestamp of the block when the NFT event occurred, converted from timestamp."
+        data_type: timestamp_ntz
       - name: tx_hash
         description: "Transaction hash associated with the NFT event, if applicable."
+        data_type: varchar
       - name: type
         description: "Type of NFT event: 'mint' (NFT deployment), 'put_on_sale' (NFT listed for sale), 'cancel_sale' (sale canceled), 'sale' (NFT sold), 'transfer' (direct NFT transfer), or 'bid' (auction bid)."
+        data_type: varchar
       - name: sale_type
         description: "Type of the sale: 'sale' for fixed price sales or 'auction' for auctions with bids."
+        data_type: varchar
       - name: nft_item_address
         description: "Address of the NFT item involved in the event."
+        data_type: varchar
       - name: nft_item_index
         description: "Index of the NFT item within its collection."
+        data_type: text
       - name: payment_asset
         description: "Asset type used for payment. Currently only 'TON' is supported."
+        data_type: varchar
       - name: sale_price
         description: "Price of the NFT in a sale event."
+        data_type: number
       - name: forward_amount
         description: "Amount of TON forwarded in transfer message, if related to the event."
+        data_type: number
       - name: royalty_amount
         description: "Amount of royalty in a sale event."
+        data_type: number
       - name: marketplace_fee
         description: "Fee charged by the marketplace in a sale event."
+        data_type: number
       - name: auction_max_bid
         description: "Maximum bid allowed in an auction."
+        data_type: number
       - name: auction_min_bid
         description: "Minimum bid required in an auction."
+        data_type: number
       - name: sale_contract
         description: "Address of the sale contract if related to the event."
+        data_type: varchar
       - name: royalty_address
         description: "Address receiving the royalty payment."
+        data_type: varchar
       - name: marketplace_address
         description: "Address of the marketplace facilitating the sale."
+        data_type: varchar
       - name: marketplace_fee_address
         description: "Address receiving the marketplace fee."
+        data_type: varchar
       - name: owner_address
         description: "Current owner address of the NFT."
+        data_type: varchar
       - name: collection_address
         description: "Address of the NFT collection. May be null for standalone NFTs."
+        data_type: varchar
       - name: content_onchain
         description: "NFT metadata extracted from on-chain data in JSON format."
+        data_type: text
       - name: trace_id
         description: "Trace ID for the transaction if applicable."
+        data_type: varchar
       - name: query_id
         description: "Query ID associated with the event if it exists."
+        data_type: number
       - name: is_init
         description: "Boolean flag indicating if the NFT is initialized."
+        data_type: boolean
       - name: custom_payload
         description: "Custom payload from the transfer message if related to the event."
+        data_type: binary
       - name: comment
         description: "Text comment extracted from forward_payload."
+        data_type: varchar
       - name: sale_end_time
         description: "End time of the sale if applicable."
+        data_type: number
       - name: forward_payload
         description: "Payload of the forward message from transfer message if related to the event."
+        data_type: binary
       - name: auction_min_step
         description: "Minimum step for bids in an auction."
+        data_type: number
       - name: prev_owner
         description: "Previous owner address. For mint events, this is the deployer address. For transfers, it's the previous owner. For sales, it's the seller. For bids, it's the bidder. Null for put_on_sale and cancel_sale events."
+        data_type: varchar
       - name: timestamp
         description: "Unix timestamp of the NFT event."
+        data_type: number
       - name: lt
         description: "Logical time of the NFT event."
+        data_type: number
       - name: fact_nft_events_id
         description: "Unique identifier for the NFT event record."
+        data_type: varchar
+        data_tests:
+          - unique:
+              tags: ['test_quality']
       - name: inserted_timestamp
         description: "Timestamp when the record was inserted into the data warehouse."
+        data_type: timestamp_ntz
       - name: modified_timestamp
         description: "Timestamp when the record was last modified in the data warehouse."
+        data_type: timestamp_ntz
+    config:
+      contract:
+        enforced: true
     tests:
       - dbt_utils.recency:
           datepart: hour
@@ -86,28 +125,46 @@ models:
     columns:
       - name: block_timestamp
         description: "Timestamp of the block when the NFT state was recorded, converted from timestamp."
+        data_type: timestamp_ntz
       - name: address
         description: "Address of the NFT item."
+        data_type: varchar
       - name: index
         description: "Index of the NFT item within its collection."
+        data_type: text
       - name: collection_address
         description: "Address of the NFT collection. May be null for standalone NFTs."
+        data_type: varchar
       - name: owner_address
         description: "Current owner address of the NFT item."
+        data_type: varchar
       - name: content_onchain
         description: "NFT metadata extracted from on-chain data in JSON format."
+        data_type: text
       - name: is_init
         description: "Boolean flag indicating if the NFT is initialized."
+        data_type: boolean
       - name: lt
         description: "Logical time of the NFT state update."
+        data_type: number
       - name: timestamp
         description: "Unix timestamp of the NFT state update."
+        data_type: number
       - name: fact_nft_items_id
         description: "Unique identifier for the NFT item record."
+        data_type: varchar
+        data_tests:
+          - unique:
+              tags: ['test_quality']
       - name: inserted_timestamp
         description: "Timestamp when the record was inserted into the data warehouse."
+        data_type: timestamp_ntz
       - name: modified_timestamp
         description: "Timestamp when the record was last modified in the data warehouse."
+        data_type: timestamp_ntz
+    config:
+      contract:
+        enforced: true
     tests:
       - dbt_utils.recency:
           datepart: hour
@@ -121,42 +178,67 @@ models:
     columns:
       - name: address
         description: "NFT item or collection address."
+        data_type: varchar
       - name: parent_address
         description: "Collection owner address if type is 'collection', otherwise collection address for the item."
+        data_type: varchar
       - name: update_timestamp_onchain
         description: "Timestamp of the last on-chain update, converted from update_time_onchain."
+        data_type: timestamp_ntz
       - name: type
         description: "Type of NFT entity: 'item' for individual NFTs or 'collection' for NFT collections."
+        data_type: varchar
       - name: name
         description: "TEP-64 NFT name from on-chain, off-chain, or tonapi source."
+        data_type: varchar
       - name: description
         description: "TEP-64 NFT description from on-chain, off-chain, or tonapi source."
+        data_type: varchar
       - name: metadata_status
         description: "Off-chain metadata update status: 0 - no off-chain metadata, 1 - success, -1 - error."
+        data_type: number
       - name: attributes
         description: "TEP-64 NFT attributes from on-chain, off-chain, or tonapi source. Only available for NFT items, not collections."
+        data_type: text
       - name: image
         description: "TEP-64 NFT image URL from on-chain, off-chain, or tonapi source."
+        data_type: varchar
       - name: image_data
         description: "TEP-64 NFT image data from on-chain, off-chain, or tonapi source."
+        data_type: varchar
       - name: tonapi_image_url
         description: "Cached image URL from tonapi."
+        data_type: varchar
       - name: content_onchain
         description: "JSON serialized string with on-chain metadata content."
+        data_type: text
       - name: sources
         description: "Record with sources of NFT metadata fields (name, description, image, image_data, attributes). Values can be 'onchain', 'offchain', 'tonapi', or '' (not set)."
+        data_type: VARIANT
       - name: update_time_onchain
         description: "Unix timestamp of on-chain update, such as admin address transfer."
+        data_type: number
       - name: update_time_metadata
         description: "Unix timestamp of off-chain metadata update."
+        data_type: number
       - name: adding_at
         description: "Date when the output file was created."
+        data_type: number
       - name: fact_nft_metadata_id
         description: "Unique identifier for the NFT metadata record."
+        data_type: varchar
+        data_tests:
+          - unique:
+              tags: ['test_quality']
       - name: inserted_timestamp
         description: "Timestamp when the record was inserted into the data warehouse."
+        data_type: timestamp_ntz
       - name: modified_timestamp
         description: "Timestamp when the record was last modified in the data warehouse."
+        data_type: timestamp_ntz
+    config:
+      contract:
+        enforced: true
     tests:
       - dbt_utils.recency:
           datepart: hour
@@ -170,56 +252,88 @@ models:
     columns:
       - name: block_timestamp
         description: "Timestamp of the block when the NFT sale state was recorded, converted from timestamp."
+        data_type: timestamp_ntz
       - name: address
         description: "Address of the NFT sales contract."
+        data_type: varchar
       - name: nft_address
         description: "Address of the NFT item being sold."
+        data_type: varchar
       - name: type
         description: "Type of sale: 'sale' for fixed price sales or 'auction' for auctions with bids."
+        data_type: varchar
       - name: asset
         description: "Asset type used for payment, currently only 'TON' is supported."
+        data_type: varchar
       - name: price
         description: "Price of the NFT or current bid for auction."
+        data_type: number
       - name: marketplace_fee
         description: "Fee amount charged by the marketplace."
+        data_type: number
       - name: royalty_amount
         description: "Amount of royalty to be paid to the royalty address."
+        data_type: number
       - name: nft_owner_address
         description: "Address of the NFT owner who created the sale."
+        data_type: varchar
       - name: marketplace_address
         description: "Address of the marketplace facilitating the sale."
+        data_type: varchar
       - name: marketplace_fee_address
         description: "Address receiving the marketplace fee."
+        data_type: varchar
       - name: royalty_address
         description: "Address receiving the royalty payment."
+        data_type: varchar
       - name: is_complete
         description: "Boolean flag indicating if the sale is complete."
+        data_type: boolean
       - name: is_canceled
         description: "Boolean flag indicating if the sale is canceled (only for auctions)."
+        data_type: boolean
       - name: min_bid
         description: "Minimum bid amount for an auction."
+        data_type: number
       - name: max_bid
         description: "Maximum bid amount for an auction."
+        data_type: number
       - name: min_step
         description: "Minimum step for bids in an auction."
+        data_type: number
       - name: end_time
         description: "Time of expiration of the sale."
+        data_type: number
       - name: last_bid_at
         description: "Timestamp of the last bid for an auction."
+        data_type: number
       - name: last_member
         description: "Address of the last bidder for an auction."
+        data_type: varchar
       - name: created_at
         description: "Timestamp of the NFT sales contract creation."
+        data_type: number
       - name: timestamp
         description: "Unix timestamp of the sale state update."
+        data_type: number
       - name: lt
         description: "Logical time of the sale state update."
+        data_type: number
       - name: fact_nft_sales_id
         description: "Unique identifier for the NFT sale record."
+        data_type: varchar
+        data_tests:
+          - unique:
+              tags: ['test_quality']
       - name: inserted_timestamp
         description: "Timestamp when the record was inserted into the data warehouse."
+        data_type: timestamp_ntz
       - name: modified_timestamp
         description: "Timestamp when the record was last modified in the data warehouse."
+        data_type: timestamp_ntz
+    config:
+      contract:
+        enforced: true
     tests:
       - dbt_utils.recency:
           datepart: hour
@@ -233,46 +347,73 @@ models:
     columns:
       - name: block_timestamp
         description: "Timestamp of the block when the NFT transfer occurred, converted from tx_now."
+        data_type: timestamp_ntz
       - name: tx_hash
         description: "Transaction hash of the transfer."
+        data_type: varchar
       - name: tx_succeeded
         description: "Boolean flag indicating if the transfer transaction succeeded. Set to FALSE if tx_aborted is TRUE."
+        data_type: boolean
       - name: tx_aborted
         description: "Boolean flag indicating if the transfer transaction was aborted."
+        data_type: boolean
       - name: old_owner
         description: "Address of the previous owner of the NFT."
+        data_type: varchar
       - name: new_owner
         description: "Address of the new owner of the NFT."
+        data_type: varchar
       - name: nft_collection_address
         description: "Address of the NFT collection. May be null for standalone NFTs."
+        data_type: varchar
       - name: nft_item_address
         description: "Address of the NFT item being transferred."
+        data_type: varchar
       - name: nft_item_index
         description: "Index of the NFT item within its collection."
+        data_type: text
       - name: response_destination
         description: "Destination address for the response message. See TEP-62 standard."
+        data_type: varchar
       - name: forward_amount
         description: "Amount of TON forwarded with the transfer message."
+        data_type: number
       - name: custom_payload
         description: "Custom payload included in the transfer message. See TEP-62 standard."
+        data_type: binary
       - name: forward_payload
         description: "Payload of the forward message. See TEP-62 standard."
+        data_type: binary
       - name: comment
         description: "Text comment extracted from forward_payload."
+        data_type: varchar
       - name: trace_id
         description: "Trace ID from the transaction."
+        data_type: varchar
       - name: query_id
         description: "Query ID of the transfer."
+        data_type: number
       - name: tx_now
         description: "Unix timestamp of the transaction block."
+        data_type: number
       - name: tx_lt
         description: "Logical time of the transaction."
+        data_type: number
       - name: fact_nft_transfers_id
         description: "Unique identifier for the NFT transfer record."
+        data_type: varchar
+        data_tests:
+          - unique:
+              tags: ['test_quality']
       - name: inserted_timestamp
         description: "Timestamp when the record was inserted into the data warehouse."
+        data_type: timestamp_ntz
       - name: modified_timestamp
         description: "Timestamp when the record was last modified in the data warehouse."
+        data_type: timestamp_ntz
+    config:
+      contract:
+        enforced: true
     tests:
       - dbt_utils.recency:
           datepart: hour
