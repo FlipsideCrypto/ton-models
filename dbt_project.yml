@@ -42,11 +42,12 @@ models:
     deploy:
       core:
         materialized: ephemeral
-   
+
 
 data_tests:
   ton_models: # replace with the name of the chain
     +store_failures: true # all tests
+    +where: "modified_timestamp::DATE > dateadd(hour, -{{ var('TEST_HOURS_THRESHOLD', 36) }}, sysdate())" 
 
 on-run-start:
   - '{{create_sps()}}'

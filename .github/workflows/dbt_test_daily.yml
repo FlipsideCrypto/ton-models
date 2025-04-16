@@ -1,15 +1,13 @@
-name: dbt_run_incremental_core
-run-name: dbt_run_incremental_core
+name: dbt_test_daily
+run-name: dbt_test_daily
 
 on:
   workflow_dispatch:
     branches:
       - "main"
   schedule:
-    # Three hours after the daily TON exports Airflow job kicks off
-    # 20 minutes after the daily TON external table refresh happens
-    # https://github.com/ton-studio/ton-etl/blob/main/datalake/airflow/dags/datalake_daily_sync.py#L58
-    - cron: "35 3 * * *"
+    # an hour after the daily TON incremental job kicks off
+    - cron: "35 4 * * *"
     
 env:
   DBT_PROFILES_DIR: "${{ vars.DBT_PROFILES_DIR }}"
@@ -46,5 +44,4 @@ jobs:
           dbt deps
       - name: Run DBT Jobs
         run: |
-          dbt run -s "ton_models,tag:scheduled_core"
-          
+          dbt test -m tag:test_recency tag:test_quality --vars '{"TEST_HOURS_THRESHOLD":30}'
