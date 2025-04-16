@@ -1,8 +1,690 @@
 version: 2
 
 models:
-  - name: core__fact_blocks
-  
+  - name: core__fact_account_states
+    description: "Contains information about TON account states, tracking changes in account balances, statuses, and transaction histories. Based on the account_states table from TON-ETL."
+    columns:
+      - name: block_timestamp
+        description: "Timestamp of the block when the account state was recorded, converted from Unix timestamp."
+        data_type: timestamp_ntz
+      - name: account
+        description: "TON account address in base64 format."
+        data_type: varchar
+      - name: timestamp
+        description: "Unix timestamp when the account state was recorded."
+        data_type: number(38,0)
+      - name: last_trans_lt
+        description: "Logical time of the last transaction associated with this account."
+        data_type: number(38,0)
+      - name: last_tx_hash
+        description: "Hash of the last transaction associated with this account."
+        data_type: varchar
+      - name: account_status
+        description: "Current status of the account (active, uninitialized, or frozen)."
+        data_type: varchar
+      - name: balance
+        description: "Current balance of the account in nanoTONs."
+        data_type: number(38,0)
+      - name: frozen_hash
+        description: "Hash of the frozen state if the account is frozen, otherwise null."
+        data_type: varchar
+      - name: account_state_hash
+        description: "Hash of the account state."
+        data_type: varchar
+      - name: fact_account_states_id
+        description: "Unique identifier for the account state record."
+        data_type: varchar
+      - name: inserted_timestamp
+        description: "Timestamp when the record was inserted into the data warehouse."
+        data_type: timestamp_ntz
+      - name: modified_timestamp
+        description: "Timestamp when the record was last modified in the data warehouse."
+        data_type: timestamp_ntz
     config:
-      event_time: block_date
- 
+      contract:
+        enforced: true
+    tests:
+      - dbt_utils.recency:
+          datepart: hour
+          field: block_timestamp
+          interval: 30
+          severity: error
+          tags: ['test_recency']
+
+  - name: core__fact_balances
+    description: "Contains historical balance information for both native TON and Jetton balances. Tracks changes in balances over time."
+    columns:
+      - name: block_timestamp
+        description: "Timestamp of the block when the balance was recorded, converted from Unix timestamp."
+        data_type: timestamp_ntz
+      - name: address
+        description: "Address of the asset owner."
+        data_type: varchar
+      - name: asset
+        description: "Asset type, 'TON' for native TON or jetton address for Jetton balance."
+        data_type: varchar
+      - name: amount
+        description: "Balance amount. For TON, this is in nanoTONs. For Jettons, this is the raw amount before dividing by 10^decimals."
+        data_type: number(38,0)
+      - name: mintless_claimed
+        description: "Boolean flag indicating if the mintless jetton was claimed (only applicable for mintless jetton wallets)."
+        data_type: boolean
+      - name: lt
+        description: "Logical time of the balance update."
+        data_type: number(38,0)
+      - name: fact_balances_history_id
+        description: "Unique identifier for the balance history record."
+        data_type: varchar
+        data_tests:
+          - unique:
+              tags: ['test_quality']
+      - name: inserted_timestamp
+        description: "Timestamp when the record was inserted into the data warehouse."
+        data_type: timestamp_ntz
+      - name: modified_timestamp
+        description: "Timestamp when the record was last modified in the data warehouse."
+        data_type: timestamp_ntz
+    config:
+      contract:
+        enforced: true
+    tests:
+      - dbt_utils.recency:
+          datepart: hour
+          field: block_timestamp
+          interval: 30
+          severity: error
+          tags: ['test_recency']
+
+  - name: core__fact_blocks
+    description: "Contains information about blocks in the TON blockchain (masterchain and workchains). Represents the blockchain structure."
+    columns:
+      - name: block_timestamp
+        description: "Timestamp of the block, converted from gen_utime."
+        data_type: timestamp_ntz
+      - name: gen_utime
+        description: "Unix timestamp when the block was generated."
+        data_type: number(38,0)
+      - name: workchain
+        description: "Workchain ID where the block was created (usually -1 for masterchain, 0 for base workchain)."
+        data_type: number(38,0)
+      - name: version
+        description: "Version of the block."
+        data_type: number(38,0)
+      - name: shard
+        description: "Shard identifier for the block."
+        data_type: NUMBER
+      - name: seqno
+        description: "Block sequence number within its workchain."
+        data_type: number(38,0)
+      - name: vert_seqno
+        description: "Vertical sequence number for the block."
+        data_type: number(38,0)
+      - name: start_lt
+        description: "Starting logical time of the block."
+        data_type: number(38,0)
+      - name: end_lt
+        description: "Ending logical time of the block."
+        data_type: number(38,0)
+      - name: mc_block_seqno
+        description: "Masterchain block sequence number referenced by this block."
+        data_type: number(38,0)
+      - name: mc_block_shard
+        description: "Masterchain block shard referenced by this block."
+        data_type: NUMBER
+      - name: tx_count
+        description: "Number of transactions in the block."
+        data_type: number(38,0)
+      - name: global_id
+        description: "Global identifier for the TON network."
+        data_type: number(38,0)
+      - name: created_by
+        description: "Validator that created the block."
+        data_type: varchar
+      - name: want_merge
+        description: "Flag indicating if the block wants to be merged."
+        data_type: boolean
+      - name: root_hash
+        description: "Root hash of the block."
+        data_type: varchar
+      - name: key_block
+        description: "Boolean flag indicating if this is a key block."
+        data_type: boolean
+      - name: vert_seqno_incr
+        description: "Increment of vertical sequence number."
+        data_type: BOOLEAN
+      - name: validator_list_hash_short
+        description: "Short hash of the validator list."
+        data_type: number(38,0)
+      - name: after_merge
+        description: "Flag indicating if the block was created after a merge."
+        data_type: boolean
+      - name: want_split
+        description: "Flag indicating if the block wants to be split."
+        data_type: boolean
+      - name: after_split
+        description: "Flag indicating if the block was created after a split."
+        data_type: boolean
+      - name: master_ref_seqno
+        description: "Masterchain reference sequence number."
+        data_type: number(38,0)
+      - name: mc_block_workchain
+        description: "Masterchain block workchain referenced by this block."
+        data_type: number(38,0)
+      - name: file_hash
+        description: "Hash of the block file."
+        data_type: varchar
+      - name: prev_key_block_seqno
+        description: "Sequence number of the previous key block."
+        data_type: number(38,0)
+      - name: flags
+        description: "Flags associated with the block."
+        data_type: number(38,0)
+      - name: rand_seed
+        description: "Random seed used in block generation."
+        data_type: varchar
+      - name: gen_catchain_seqno
+        description: "Catchain sequence number used in block generation."
+        data_type: number(38,0)
+      - name: min_ref_mc_seqno
+        description: "Minimum referenced masterchain sequence number."
+        data_type: number(38,0)
+      - name: before_split
+        description: "Flag indicating if the block was created before a split."
+        data_type: boolean
+      - name: fact_blocks_id
+        description: "Unique identifier for the block record."
+        data_type: varchar
+        data_tests:
+          - unique:
+              tags: ['test_quality']
+      - name: inserted_timestamp
+        description: "Timestamp when the record was inserted into the data warehouse."
+        data_type: timestamp_ntz
+      - name: modified_timestamp
+        description: "Timestamp when the record was last modified in the data warehouse."
+        data_type: timestamp_ntz
+    config:
+      contract:
+        enforced: true
+    tests:
+      - dbt_utils.recency:
+          datepart: hour
+          field: block_timestamp
+          interval: 30
+          severity: error
+          tags: ['test_recency']
+      # - dbt_utils.sequential_values:
+      #     column_name: seqno
+      #     interval: 1
+      #     group_by_columns:
+      #       - workchain
+      #       - shard
+      #     where: workchain = 0
+      #     config:
+      #       severity: error
+      #       error_if: ">1"
+      #     tags: ['test_recency']
+      # - dbt_utils.sequential_values:
+      #     column_name: mc_block_seqno
+      #     interval: 1
+      #     group_by_columns:
+      #       - mc_block_seqno
+      #     config:
+      #       severity: error
+      #       error_if: ">1"
+      #     tags: ['test_recency']
+
+  - name: core__fact_jetton_events
+    description: "Contains information about Jetton events such as transfers, burns, and mints according to TEP-74 standard."
+    columns:
+      - name: block_timestamp
+        description: "Timestamp of the block when the jetton event occurred, converted from utime."
+        data_type: timestamp_ntz
+      - name: tx_hash
+        description: "Transaction hash of the event."
+        data_type: varchar
+      - name: tx_succeeded
+        description: "Boolean flag indicating if the transaction succeeded. Set to FALSE if tx_aborted is TRUE."
+        data_type: boolean
+      - name: type
+        description: "Event type: 'transfer' for TEP-74 transfer, 'burn' for TEP-74 burn, or 'mint' for jetton minting."
+        data_type: varchar
+      - name: source
+        description: "Source address of the tokens. Null for mint events."
+        data_type: varchar
+      - name: destination
+        description: "Destination address for the tokens. Null for burn events."
+        data_type: varchar
+      - name: forward_ton_amount
+        description: "Amount of TON forwarded with the transaction, stored as a raw decimal value."
+        data_type: number(38,0)
+      - name: amount
+        description: "Amount of jettons involved in the event, stored as a raw value without dividing by 10^decimals."
+        data_type: number(38,0)
+      - name: jetton_master
+        description: "Address of the jetton master contract."
+        data_type: varchar
+      - name: jetton_wallet
+        description: "Address of the jetton wallet contract."
+        data_type: varchar
+      - name: comment
+        description: "Optional comment attached to the transaction."
+        data_type: varchar
+      - name: query_id
+        description: "Query ID of the transaction, stored as a raw decimal value."
+        data_type: number(38,0)
+      - name: tx_lt
+        description: "Logical time of the transaction."
+        data_type: number(38,0)
+      - name: utime
+        description: "Unix timestamp when the event occurred."
+        data_type: number(38,0)
+      - name: tx_aborted
+        description: "Boolean flag indicating if the transaction was aborted. If true, the event should be discarded."
+        data_type: boolean
+      - name: fact_jetton_events_id
+        description: "Unique identifier for the jetton event record."
+        data_type: varchar
+        data_tests:
+          - unique:
+              tags: ['test_quality']
+      - name: inserted_timestamp
+        description: "Timestamp when the record was inserted into the data warehouse."
+        data_type: timestamp_ntz
+      - name: modified_timestamp
+        description: "Timestamp when the record was last modified in the data warehouse."
+        data_type: timestamp_ntz
+    config:
+      contract:
+        enforced: true
+    tests:
+      - dbt_utils.recency:
+          datepart: hour
+          field: block_timestamp
+          interval: 30
+          severity: error
+          tags: ['test_recency']
+
+  - name: core__fact_jetton_metadata
+    description: "Contains metadata information for Jettons (TEP-64 standard), including both on-chain and off-chain data."
+    columns:
+      - name: address
+        description: "Jetton master address."
+        data_type: varchar
+      - name: update_timestamp_onchain
+        description: "Timestamp of the last on-chain update, converted from update_time_onchain."
+        data_type: timestamp_ntz
+      - name: symbol
+        description: "TEP-64 jetton symbol from on-chain, off-chain, or tonapi source."
+        data_type: varchar
+      - name: decimals
+        description: "TEP-64 jetton decimals from on-chain, off-chain, or tonapi source. If not present, defaults to 9."
+        data_type: number(38,0)
+      - name: name
+        description: "TEP-64 jetton name from on-chain, off-chain, or tonapi source."
+        data_type: varchar
+      - name: description
+        description: "TEP-64 jetton description from on-chain, off-chain, or tonapi source."
+        data_type: varchar
+      - name: tonapi_image_url
+        description: "Cached image URL from tonapi."
+        data_type: varchar
+      - name: image_data
+        description: "TEP-64 jetton image data from on-chain, off-chain, or tonapi source."
+        data_type: varchar
+      - name: image
+        description: "TEP-64 jetton image URL from on-chain, off-chain, or tonapi source."
+        data_type: varchar
+      - name: admin_address
+        description: "Admin address from on-chain data."
+        data_type: varchar
+      - name: mintable
+        description: "Boolean flag indicating if the jetton is mintable based on on-chain data."
+        data_type: boolean
+      - name: jetton_content_onchain
+        description: "JSON serialized string with on-chain jetton content."
+        data_type: varchar
+      - name: jetton_wallet_code_hash
+        description: "Jetton wallet code hash from on-chain data."
+        data_type: varchar
+      - name: code_hash
+        description: "Jetton code hash from on-chain data."
+        data_type: varchar
+      - name: adding_at
+        description: "Date when the output file was created."
+        data_type: number
+      - name: sources
+        description: "Record with sources of jetton metadata fields (symbol, name, description, image, image_data, decimals). Values can be 'onchain', 'offchain', 'tonapi', or '' (not set)."
+        data_type: variant
+      - name: metadata_status
+        description: "Off-chain metadata update status: 0 - no off-chain metadata, 1 - success, -1 - error."
+        data_type: number(38,0)
+      - name: update_time_onchain
+        description: "Unix timestamp of on-chain update, such as admin address transfer."
+        data_type: number(38,0)
+      - name: update_time_metadata
+        description: "Unix timestamp of off-chain metadata update."
+        data_type: number(38,0)
+      - name: fact_jetton_metadata_id
+        description: "Unique identifier for the jetton metadata record."
+        data_type: varchar
+        data_tests:
+          - unique:
+              tags: ['test_quality']
+      - name: inserted_timestamp
+        description: "Timestamp when the record was inserted into the data warehouse."
+        data_type: timestamp_ntz
+      - name: modified_timestamp
+        description: "Timestamp when the record was last modified in the data warehouse."
+        data_type: timestamp_ntz
+    config:
+      contract:
+        enforced: true
+    tests:
+      - dbt_utils.recency:
+          datepart: hour
+          field: update_timestamp_onchain
+          interval: 30
+          severity: error
+          tags: ['test_recency']
+
+  - name: core__fact_messages
+    description: "Contains messages from transactions, including both internal and external messages with their body data."
+    columns:
+      - name: block_timestamp
+        description: "Timestamp of the block when the message was processed, converted from tx_now."
+        data_type: timestamp_ntz
+      - name: tx_hash
+        description: "Transaction hash associated with the message."
+        data_type: varchar
+      - name: msg_hash
+        description: "Hash of the message."
+        data_type: varchar
+      - name: body_hash
+        description: "Hash of the message body."
+        data_type: varchar
+      - name: trace_id
+        description: "Trace ID for the message within the transaction."
+        data_type: varchar
+      - name: direction
+        description: "Direction of the message: 'in' for messages that initiated a transaction, 'out' for messages resulting from a transaction."
+        data_type: varchar
+      - name: source
+        description: "Source address of the message."
+        data_type: varchar
+      - name: destination
+        description: "Destination address of the message."
+        data_type: varchar
+      - name: value
+        description: "Amount of TON attached to the message."
+        data_type: number(38,0)
+      - name: opcode
+        description: "Operation code extracted from the message body."
+        data_type: number(38,0)
+      - name: created_at
+        description: "Timestamp when the message was created."
+        data_type: number
+      - name: tx_now
+        description: "Unix timestamp of the transaction processing."
+        data_type: number(38,0)
+      - name: ihr_fee
+        description: "Instant hypercube routing fee."
+        data_type: number(38,0)
+      - name: import_fee
+        description: "Import fee for the message."
+        data_type: number(38,0)
+      - name: fwd_fee
+        description: "Forward fee for the message."
+        data_type: number(38,0)
+      - name: ihr_disabled
+        description: "Boolean flag indicating if instant hypercube routing is disabled for this message."
+        data_type: boolean
+      - name: bounced
+        description: "Boolean flag indicating if the message was bounced."
+        data_type: boolean
+      - name: bounce
+        description: "Boolean flag indicating if the message can bounce if delivery fails."
+        data_type: boolean
+      - name: comment
+        description: "Text comment extracted from the message body if available."
+        data_type: varchar
+      - name: tx_lt
+        description: "Logical time of the transaction that processed this message."
+        data_type: number(38,0)
+      - name: created_lt
+        description: "Logical time when the message was created."
+        data_type: number(38,0)
+      - name: init_state_hash
+        description: "Hash of the initial state if present."
+        data_type: varchar
+      - name: init_state_boc
+        description: "Raw initial state BOC (Bag of Cells) if present."
+        data_type: binary
+      - name: body_boc
+        description: "Raw body BOC (Bag of Cells) of the message."
+        data_type: binary
+      - name: fact_messages_id
+        description: "Unique identifier for the message record."
+        data_type: varchar
+        data_tests:
+          - unique:
+              tags: ['test_quality']
+      - name: inserted_timestamp
+        description: "Timestamp when the record was inserted into the data warehouse."
+        data_type: timestamp_ntz
+      - name: modified_timestamp
+        description: "Timestamp when the record was last modified in the data warehouse."
+        data_type: timestamp_ntz
+    config:
+      contract:
+        enforced: true
+    tests:
+      - dbt_utils.recency:
+          datepart: hour
+          field: block_timestamp
+          interval: 30
+          severity: error
+          tags: ['test_recency']
+
+  - name: core__fact_transactions
+    description: "Contains information about transactions in the TON blockchain, tracking account changes, fees, and computation results."
+    columns:
+      - name: block_timestamp
+        description: "Timestamp of the block when the transaction was processed, converted from now."
+        data_type: timestamp_ntz
+      - name: tx_hash
+        description: "Hash of the transaction."
+        data_type: varchar
+      - name: prev_tx_hash
+        description: "Hash of the previous transaction for the same account."
+        data_type: varchar
+      - name: tx_succeeded
+        description: "Boolean flag indicating if the transaction succeeded. Set to FALSE if aborted is TRUE."
+        data_type: boolean
+      - name: aborted
+        description: "Boolean flag indicating if the transaction was aborted."
+        data_type: boolean
+      - name: account
+        description: "Account address associated with the transaction."
+        data_type: varchar
+      - name: orig_status
+        description: "Original status of the account before the transaction."
+        data_type: varchar
+      - name: end_status
+        description: "End status of the account after the transaction."
+        data_type: varchar
+      - name: compute_success
+        description: "Boolean flag indicating if the computation was successful."
+        data_type: boolean
+      - name: compute_skipped
+        description: "Boolean flag indicating if the computation was skipped."
+        data_type: boolean
+      - name: compute_gas_fees
+        description: "Gas fees for the computation."
+        data_type: number(38,0)
+      - name: action_result_code
+        description: "Result code for the action phase."
+        data_type: number(38,0)
+      - name: action_success
+        description: "Boolean flag indicating if the action phase was successful."
+        data_type: boolean
+      - name: action_spec_actions
+        description: "Number of special actions performed."
+        data_type: number(38,0)
+      - name: action_result_arg
+        description: "Argument for the action result."
+        data_type: number(38,0)
+      - name: action_skipped_actions
+        description: "Number of actions that were skipped."
+        data_type: number(38,0)
+      - name: action_valid
+        description: "Boolean flag indicating if the action was valid."
+        data_type: boolean
+      - name: action_tot_actions
+        description: "Total number of actions."
+        data_type: number(38,0)
+      - name: action_no_funds
+        description: "Boolean flag indicating if there were insufficient funds for the action."
+        data_type: boolean
+      - name: action_status_change
+        description: "Status change during the action phase."
+        data_type: varchar
+      - name: compute_msg_state_used
+        description: "Boolean flag indicating if the message state was used during computation."
+        data_type: boolean
+      - name: descr
+        description: "Description or type of the transaction."
+        data_type: varchar
+      - name: block_workchain
+        description: "Workchain ID of the block containing this transaction."
+        data_type: number(38,0)
+      - name: block_seqno
+        description: "Sequence number of the block containing this transaction."
+        data_type: number(38,0)
+      - name: block_shard
+        description: "Shard ID of the block containing this transaction."
+        data_type: number
+      - name: mc_block_seqno
+        description: "Masterchain block sequence number referenced by this transaction."
+        data_type: number(38,0)
+      - name: total_fees
+        description: "Total fees for the transaction."
+        data_type: number(38,0)
+      - name: storage_fees_collected
+        description: "Storage fees collected during the transaction."
+        data_type: number(38,0)
+      - name: credit_due_fees_collected
+        description: "Credit fees collected during the transaction."
+        data_type: number(38,0)
+      - name: action_total_fwd_fees
+        description: "Total forward fees for actions."
+        data_type: number(38,0)
+      - name: storage_fees_due
+        description: "Storage fees due for the transaction."
+        data_type: number(38,0)
+      - name: action_total_action_fees
+        description: "Total fees for all actions."
+        data_type: number(38,0)
+      - name: account_state_balance_before
+        description: "Account balance before the transaction."
+        data_type: number(38,0)
+      - name: account_state_balance_after
+        description: "Account balance after the transaction."
+        data_type: number(38,0)
+      - name: account_state_hash_before
+        description: "Hash of the account state before the transaction."
+        data_type: varchar
+      - name: account_state_hash_after
+        description: "Hash of the account state after the transaction."
+        data_type: varchar
+      - name: account_state_code_hash_before
+        description: "Hash of the account code before the transaction."
+        data_type: varchar
+      - name: account_state_code_hash_after
+        description: "Hash of the account code after the transaction."
+        data_type: varchar
+      - name: installed
+        description: "Boolean flag indicating if code was installed during the transaction."
+        data_type: boolean
+      - name: destroyed
+        description: "Boolean flag indicating if the account was destroyed during the transaction."
+        data_type: boolean
+      - name: is_tock
+        description: "Boolean flag indicating if this is a tick-tock transaction."
+        data_type: boolean
+      - name: credit_first
+        description: "Boolean flag indicating if credit was processed first."
+        data_type: boolean
+      - name: compute_account_activated
+        description: "Boolean flag indicating if the account was activated during computation."
+        data_type: boolean
+      - name: compute_vm_steps
+        description: "Number of VM steps executed during computation."
+        data_type: number(38,0)
+      - name: compute_exit_arg
+        description: "Exit argument from the computation."
+        data_type: number(38,0)
+      - name: compute_gas_credit
+        description: "Gas credit for the computation."
+        data_type: number(38,0)
+      - name: compute_gas_limit
+        description: "Gas limit for the computation."
+        data_type: number(38,0)
+      - name: compute_gas_used
+        description: "Gas used during the computation."
+        data_type: number(38,0)
+      - name: compute_vm_init_state_hash
+        description: "Hash of the VM's initial state during computation."
+        data_type: varchar
+      - name: compute_vm_final_state_hash
+        description: "Hash of the VM's final state after computation."
+        data_type: varchar
+      - name: skipped_reason
+        description: "Reason for skipping the transaction if it was skipped."
+        data_type: varchar
+      - name: compute_exit_code
+        description: "Exit code from the computation."
+        data_type: number(38,0)
+      - name: storage_status_change
+        description: "Storage status change during the transaction."
+        data_type: varchar
+      - name: compute_mode
+        description: "Mode of computation."
+        data_type: number(38,0)
+      - name: credit
+        description: "Credit amount for the transaction."
+        data_type: number(38,0)
+      - name: trace_id
+        description: "Trace ID for the transaction."
+        data_type: varchar
+      - name: lt
+        description: "Logical time of the transaction."
+        data_type: number(38,0)
+      - name: prev_trans_lt
+        description: "Logical time of the previous transaction for the same account."
+        data_type: number(38,0)
+      - name: now
+        description: "Unix timestamp when the transaction was processed."
+        data_type: number(38,0)
+      - name: fact_transactions_id
+        description: "Unique identifier for the transaction record."
+        data_type: varchar
+        data_tests:
+          - unique:
+              tags: ['test_quality']
+      - name: inserted_timestamp
+        description: "Timestamp when the record was inserted into the data warehouse."
+        data_type: timestamp_ntz
+      - name: modified_timestamp
+        description: "Timestamp when the record was last modified in the data warehouse."
+        data_type: timestamp_ntz
+    config:
+      contract:
+        enforced: true
+    tests:
+      - dbt_utils.recency:
+          datepart: hour
+          field: block_timestamp
+          interval: 30
+          severity: error
+          tags: ['test_recency']

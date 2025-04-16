@@ -1,0 +1,168 @@
+version: 2
+
+models:
+  - name: defi__fact_dex_pools
+    description: "Contains history of DEX pools states including static information about pools, reserves, and estimated TVL values. Each state includes information about the jettons in the pool, fees, and liquidity metrics."
+    columns:
+      - name: block_timestamp_last_updated
+        description: "Timestamp of when the pool was last updated, converted from last_updated Unix timestamp."
+        data_type: timestamp_ntz
+      - name: block_timestamp_discovered_at
+        description: "Timestamp of when the pool was first discovered (first swap), converted from discovered_at Unix timestamp."
+        data_type: timestamp_ntz
+      - name: project
+        description: "Project name of the DEX (e.g., ston.fi, dedust.io, megaton.fi, tonco)."
+        data_type: varchar
+      - name: pool
+        description: "Address of the pool."
+        data_type: varchar
+      - name: version
+        description: "Version of the project protocol."
+        data_type: INT
+      - name: is_liquid
+        description: "Boolean flag indicating if the pool is liquid. A pool is considered liquid if it has TON, LSD, or a stable coin."
+        data_type: boolean
+      - name: reserves_right
+        description: "Raw amount of the right jetton in the pool."
+        data_type: number
+      - name: reserves_left
+        description: "Raw amount of the left jetton in the pool."
+        data_type: number
+      - name: jetton_right
+        description: "Address of the right jetton in the pool (fixed for each pool address, cannot be changed)."
+        data_type: varchar
+      - name: jetton_left
+        description: "Address of the left jetton in the pool (fixed for each pool address, cannot be changed)."
+        data_type: varchar
+      - name: total_supply
+        description: "Total supply of the pool LP-jetton. For TONCO, represents the number of active NFT positions."
+        data_type: number
+      - name: protocol_fee
+        description: "Fee percentage allocated to the protocol. Total fee equals lp_fee + protocol_fee + referral_fee (when referral address is present)."
+        data_type: BIGINT
+      - name: referral_fee
+        description: "Fee percentage allocated to referrals when a referral address is specified during a swap. For ston.fi v2, this value is always null."
+        data_type: BIGINT
+      - name: lp_fee
+        description: "Fee percentage allocated to liquidity providers."
+        data_type: BIGINT
+      - name: tvl_ton
+        description: "Total Value Locked in the pool denominated in TON. Null for pools with is_liquid=false."
+        data_type: BIGINT
+      - name: tvl_usd
+        description: "Total Value Locked in the pool denominated in USD. Null for pools with is_liquid=false."
+        data_type: BIGINT
+      - name: last_updated
+        description: "Unix timestamp of the pool's last update (swap or pool LP-jetton mint/burn)."
+        data_type: number
+      - name: discovered_at
+        description: "Unix timestamp of when the pool was first discovered through a swap."
+        data_type: number
+      - name: fact_dex_pools_id
+        description: "Unique identifier for the DEX pool record."
+        data_type: varchar
+        data_tests:
+          - unique:
+              tags: ['test_quality']
+      - name: inserted_timestamp
+        description: "Timestamp when the record was inserted into the data warehouse."
+        data_type: timestamp_ntz
+      - name: modified_timestamp
+        description: "Timestamp when the record was last modified in the data warehouse."
+        data_type: timestamp_ntz
+    config:
+      contract:
+        enforced: true
+    tests:
+      - dbt_utils.recency:
+          datepart: hour
+          field: block_timestamp_last_updated
+          interval: 30
+          severity: error
+          tags: ['test_recency']
+
+  - name: defi__fact_dex_trades
+    description: "Contains DEX and launchpad trading data, capturing swap events across different decentralized exchanges and launchpad platforms in the TON ecosystem."
+    columns:
+      - name: block_timestamp
+        description: "Timestamp of the block when the trade event occurred, converted from event_time."
+        data_type: timestamp_ntz
+      - name: event_type
+        description: "Type of the event: 'trade' for normal DEX swaps or 'launch' for when liquidity is collected from a bonding curve and sent to DEX."
+        data_type: varchar
+      - name: tx_hash
+        description: "Transaction hash of the trade."
+        data_type: varchar
+      - name: project_type
+        description: "Type of project: 'dex' for classical AMM DEXs or 'launchpad' for bonding curve launchpads."
+        data_type: varchar
+      - name: project
+        description: "Name of the project (e.g., ston.fi, dedust.io, megaton.fi, tonco, ton.fun, gaspump)."
+        data_type: varchar
+      - name: pool_address
+        description: "Address of the pool where the trade occurred. Null if the pool is not known."
+        data_type: varchar
+      - name: version
+        description: "Version of the project protocol."
+        data_type: INT
+      - name: trader_address
+        description: "Address of the trader who executed the swap."
+        data_type: varchar
+      - name: token_bought_address
+        description: "Address of the token that was bought. May include special wrapped TON aliases."
+        data_type: varchar
+      - name: token_sold_address
+        description: "Address of the token that was sold. May include special wrapped TON aliases."
+        data_type: varchar
+      - name: amount_bought_raw
+        description: "Raw amount of the token bought without dividing by 10^decimals. To get decimals, use the jetton_metadata table."
+        data_type: number
+      - name: amount_sold_raw
+        description: "Raw amount of the token sold without dividing by 10^decimals. To get decimals, use the jetton_metadata table."
+        data_type: number
+      - name: router_address
+        description: "Address of the router used for the trade. Null if the router is not used by the project."
+        data_type: varchar
+      - name: volume_ton
+        description: "Volume of the trade in TON. Calculated based on the amount of tokens traded if the trade involves TON, wrapped TON, USDT, USDC, or LSD (stTON, tsTON, hTON)."
+        data_type: BIGINT
+      - name: volume_usd
+        description: "Volume of the trade in USD. Calculated based on the amount of tokens traded if the trade involves TON, wrapped TON, USDT, USDC, or LSD."
+        data_type: BIGINT
+      - name: referral_address
+        description: "Referral address if specified. Null if the referral is not specified or not supported by the project."
+        data_type: varchar
+      - name: platform_tag
+        description: "Platform address. Null if the platform is not specified or not supported by the project."
+        data_type: varchar
+      - name: trace_id
+        description: "Trace ID for the transaction."
+        data_type: varchar
+      - name: query_id
+        description: "Query ID of the transaction. Null if query ID is not supported by the project."
+        data_type: BIGINT
+      - name: event_time
+        description: "Unix timestamp when the trade event occurred."
+        data_type: number
+      - name: fact_dex_trades_id
+        description: "Unique identifier for the DEX trade record."
+        data_type: varchar
+        data_tests:
+          - unique:
+              tags: ['test_quality']
+      - name: inserted_timestamp
+        description: "Timestamp when the record was inserted into the data warehouse."
+        data_type: timestamp_ntz
+      - name: modified_timestamp
+        description: "Timestamp when the record was last modified in the data warehouse."
+        data_type: timestamp_ntz
+    config:
+      contract:
+        enforced: true
+    tests:
+      - dbt_utils.recency:
+          datepart: hour
+          field: block_timestamp
+          interval: 30
+          severity: error
+          tags: ['test_recency']
