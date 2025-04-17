@@ -31,7 +31,8 @@ WITH pre_final AS (
     FROM
         {{ ref('bronze__nft_metadata') }}
         qualify ROW_NUMBER() over (
-            PARTITION BY address,
+            PARTITION BY parent_address,
+            address,
             update_time_metadata,
             update_time_onchain
             ORDER BY
