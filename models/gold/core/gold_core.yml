@@ -40,6 +40,19 @@ models:
       - name: modified_timestamp
         description: "Timestamp when the record was last modified in the data warehouse."
         data_type: timestamp_ntz
+
+      - name: CODE_BOC
+        description: "The code boc"
+        data_type: BINARY
+      - name: CODE_HASH
+        description: "The code hash"
+        data_type: string
+      - name: DATA_BOC
+        description: The data bloc"
+        data_type: BINARY
+      - name: DATA_HASH
+        description: "The data hash"
+        data_type: string
     config:
       contract:
         enforced: true
