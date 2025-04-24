@@ -64,7 +64,7 @@ SELECT
     query_id,
     _inserted_timestamp,
     {{ dbt_utils.generate_surrogate_key(
-        ['tx_hash','trace_id']
+        ['tx_hash','trace_id','event_type']
     ) }} AS dex_trades_id,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
