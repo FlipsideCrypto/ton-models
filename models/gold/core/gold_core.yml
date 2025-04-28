@@ -286,6 +286,9 @@ models:
       - name: query_id
         description: "Query ID of the transaction, stored as a raw decimal value."
         data_type: number(38,0)
+      - name: trace_id
+        description: The trace ID of the transaction
+        data_type: string
       - name: tx_lt
         description: "Logical time of the transaction."
         data_type: number(38,0)

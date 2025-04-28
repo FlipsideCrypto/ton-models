@@ -23,6 +23,7 @@ SELECT
     jetton_wallet,
     COMMENT,
     query_id,
+    trace_id,
     tx_lt,
     utime,
     tx_aborted,

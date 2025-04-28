@@ -25,6 +25,7 @@ WITH pre_final AS (
         tx_aborted,
         query_id,
         destination,
+        VALUE :trace_id :: STRING AS trace_id,
         _inserted_timestamp
     FROM
         {{ ref('bronze__jetton_events') }}
@@ -48,6 +49,7 @@ SELECT
     source,
     tx_aborted,
     query_id,
+    trace_id,
     destination,
     _inserted_timestamp,
     {{ dbt_utils.generate_surrogate_key(

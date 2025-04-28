@@ -286,6 +286,8 @@ models:
         data_type: TIMESTAMP_NTZ
       - name: query_id
         data_type: NUMBER
+      - name: trace_id
+        data_type: VARCHAR
       - name: source
         data_type: VARCHAR
       - name: tx_aborted
