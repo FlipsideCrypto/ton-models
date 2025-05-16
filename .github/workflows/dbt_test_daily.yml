@@ -45,3 +45,10 @@ jobs:
       - name: Run DBT Jobs
         run: |
           dbt test -m tag:test_recency tag:test_quality --vars '{"TEST_HOURS_THRESHOLD":30}'
+
+  notify-failure:
+    needs: [run_dbt_jobs]
+    if: failure()
+    uses: ./.github/workflows/slack_notify.yml
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
